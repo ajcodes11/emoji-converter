@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emoji Encoder / Decoder</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+  body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f172a,#071233);
+    color:#e6eef8;
+  }
+
+  .container{
+    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));
+    padding:30px;
+    border-radius:25px;
+    width:90%;
+    max-width:700px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.5);
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* Profile Circle */
+  .profile-box{
+    width:150px;
+    height:150px;
+    margin:0 auto 20px;
+    border-radius:50%;
+    padding:5px;
+    background:conic-gradient(#7c3aed,#06b6d4,#7c3aed);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+  .profile-box img{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    object-fit:cover;
+    object-position: center 0px;
+    border:3px solid rgba(255,255,255,0.4);
+  }
+
+  h1{
+    text-align:center;
+    margin-bottom:20px;
+    font-size:28px;
+    color:white;
+    text-shadow:0 2px 6px rgba(0,0,0,0.5);
+  }
+
+  textarea{
+    width:100%;
+    min-height:120px;
+    margin:10px 0;
+    padding:15px;
+    border-radius:12px;
+    border:none;
+    background:rgba(255,255,255,0.05);
+    color:white;
+    font-size:16px;
+    resize:vertical;
+    outline:none;
+    transition:0.3s;
+  }
+  textarea:focus{
+    background:rgba(255,255,255,0.08);
+    box-shadow:0 0 8px rgba(124,58,237,0.4);
+  }
+
+  .btn{
+    padding:12px 20px;
+    margin:5px;
+    border:none;
+    border-radius:12px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+  }
+  .btn-primary{
+    background:linear-gradient(90deg,#7c3aed,#06b6d4);
+    color:white;
+    box-shadow:0 8px 20px rgba(124,58,237,0.3);
+  }
+  .btn-primary:hover{transform:scale(1.05);}
+
+  .btn-ghost{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.3);
+    color:white;
+  }
+  .btn-ghost:hover{background:rgba(255,255,255,0.1);transform:scale(1.05);}
+
+  .button-group{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin:10px 0;
+    flex-wrap:wrap;
+  }
+
+  .input-container,.output-container{
+    position:relative;
+    display:flex;
+    align-items:flex-start;
+  }
+
+  .copy-btn{
+    margin-left:10px;
+    padding:6px 12px;
+    font-size:12px;
+    border-radius:8px;
+    border:none;
+    background:linear-gradient(90deg,#7c3aed,#06b6d4);
+    color:white;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+
+  .output{
+    flex:1;
+    min-height:120px;
+    padding:15px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.02);
+    color:white;
+    font-size:16px;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+  }
+
+  .footer{
+    margin-top:15px;
+    text-align:center;
+    color:rgba(255,255,255,0.6);
+    font-size:13px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- New Profile Circle -->
+  <div class="profile-box">
+    <img src="C:\Users\Laptop care rxl\Desktop\html files\github\1756784819526zrs4g6f0.jpeg" alt="User">
+  </div>
+
+  <h1>Emoji Encoder / Decoder</h1><br>
+  <h1>Created by K.Ajay kumar</h1>
+  
+  <div class="input-container">
+    <textarea id="inputArea" placeholder="Type your message here..."></textarea>
+    <button id="copyInput" class="copy-btn">Copy</button>
+  </div>
+  
+  <div class="button-group">
+    <button id="encryptBtn" class="btn btn-primary">🔐 Encrypt</button>
+    <button id="decryptBtn" class="btn btn-primary">🔓 Decrypt</button>
+    <button id="clearBtn" class="btn btn-ghost">Clear</button>
+  </div>
+  
+  <div class="output-container">
+    <div class="output" id="output">Output will appear here...</div>
+    <button id="copyOutput" class="copy-btn">Copy</button>
+  </div>
+
+  <div class="footer">Supports a-z, A-Z, 0-9 and keeps symbols/spaces</div>
+</div>
+
+<script>
+const lower = "abcdefghijklmnopqrstuvwxyz".split('');
+const lowerEmojis = ['😀','😁','😂','😃','😄','😅','😆','😉','😊','😋','😎','😍','😘','😗','😙','😚','😜','😝','😛','🤑','🤗','🤔','🤐','🤨','😐','😑'];
+
+const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+const upperEmojis = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🦆','🦅','🦉','🦇','🐺','🦄','🐢'];
+
+const digits = "0123456789".split('');
+const digitEmojis = ['🍎','🍌','🍒','🍇','🍉','🍓','🍍','🥭','🍑','🥝'];
+
+const encodeMap = new Map();
+const decodeMap = new Map();
+
+for(let i=0;i<26;i++){
+  encodeMap.set(lower[i], lowerEmojis[i]);
+  decodeMap.set(lowerEmojis[i], lower[i]);
+
+  encodeMap.set(upper[i], upperEmojis[i]);
+  decodeMap.set(upperEmojis[i], upper[i]);
+}
+for(let i=0;i<10;i++){
+  encodeMap.set(digits[i], digitEmojis[i]);
+  decodeMap.set(digitEmojis[i], digits[i]);
+}
+
+// Decode regex
+const emojiKeys = Array.from(decodeMap.keys()).sort((a,b)=>b.length-a.length)
+  .map(e=>e.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+
+const decodeRegex = new RegExp(emojiKeys.join('|'), 'g');
+
+// Random encryption
+function encryptMessage(text){
+  return text.split('').map(c=>{
+    if(encodeMap.has(c)){
+      return encodeMap.get(c);
+    }
+    return c;
+  }).join('');
+}
+
+// Decode
+function decryptMessage(text){
+  return text.replace(decodeRegex, m => decodeMap.get(m) || m);
+}
+
+const inputArea = document.getElementById('inputArea');
+const output = document.getElementById('output');
+
+document.getElementById('encryptBtn').onclick = ()=>{
+  output.textContent = encryptMessage(inputArea.value) || '—';
+}
+document.getElementById('decryptBtn').onclick = ()=>{
+  output.textContent = decryptMessage(inputArea.value) || '—';
+}
+document.getElementById('clearBtn').onclick = ()=>{
+  inputArea.value='';
+  output.textContent='Output will appear here...';
+}
+
+// Copy
+document.getElementById('copyInput').onclick = ()=>navigator.clipboard.writeText(inputArea.value);
+document.getElementById('copyOutput').onclick = ()=>navigator.clipboard.writeText(output.textContent);
+</script>
+</body>
+</html>
